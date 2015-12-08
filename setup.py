@@ -1,4 +1,5 @@
-from setuptools import setup
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 import inspect
 import os
@@ -51,7 +52,8 @@ class PyTest(TestCommand):
 
 
 setup(name='queue_utils',
-      version='0.0.1',
+	  packages=find_packages(),
+      version=version,
       description='A set of utilities for tasks based on RabbitMQ',
       long_description=open('README.md').read(),
       url='https://github.com/elezar/queue_utils',
@@ -59,8 +61,6 @@ setup(name='queue_utils',
       author_email='evan.lezar@zalando.de',
       license='MIT',
       install_requires=get_install_requirements('requirements.txt'),
-      packages=['queue_utils'],
       tests_require=['pytest-cov', 'pytest'],
       cmdclass={'test': PyTest},
-      test_suite='tests',
-      zip_safe=False)
+      test_suite='tests')
