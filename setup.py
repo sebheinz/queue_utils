@@ -68,4 +68,5 @@ setup(name='queue_utils',
       install_requires=get_install_requirements('requirements.txt'),
       tests_require=['pytest-cov', 'pytest'],
       cmdclass={'test': PyTest},
-      test_suite='tests')
+      test_suite='tests',
+      include_package_data=True,)
