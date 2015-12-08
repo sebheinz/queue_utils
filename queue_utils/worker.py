@@ -1,5 +1,5 @@
 import logging
-import json
+
 
 class Worker(object):
     def __init__(self, input, output, work_method, payload_check=None):
@@ -55,7 +55,6 @@ class Worker(object):
 
         # TODO: Add logging.
         # print " [x] Done"
-
 
     def is_valid_payload(self, payload):
         # Checking if the payload is valid.

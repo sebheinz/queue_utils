@@ -9,7 +9,8 @@ import sys
 from setuptools import setup, find_packages
 from setuptools.command.test import test as TestCommand
 
-__location__ = os.path.join(os.getcwd(), os.path.dirname(inspect.getfile(inspect.currentframe())))
+__location__ = os.path.join(
+    os.getcwd(), os.path.dirname(inspect.getfile(inspect.currentframe())))
 
 
 def read_version(package):
@@ -18,9 +19,11 @@ def read_version(package):
             if line.startswith('__version__ = '):
                 return line.split()[-1].strip().strip("'")
 
+
 version = read_version('queue_utils')
 
-py_major_version, py_minor_version, _ = (int(v.rstrip('+')) for v in platform.python_version_tuple())
+py_major_version, py_minor_version, _ = (
+    int(v.rstrip('+')) for v in platform.python_version_tuple())
 
 
 def get_install_requirements(path):
@@ -36,7 +39,8 @@ class PyTest(TestCommand):
     def initialize_options(self):
         TestCommand.initialize_options(self)
         self.cov = None
-        self.pytest_args = ['--cov', 'queue_utils', '--cov-report', 'term-missing']
+        self.pytest_args = ['--cov', 'queue_utils', '--cov-report',
+                            'term-missing']
         self.cov_html = False
 
     def finalize_options(self):
@@ -52,7 +56,7 @@ class PyTest(TestCommand):
 
 
 setup(name='queue_utils',
-	  packages=find_packages(),
+      packages=find_packages(),
       version=version,
       description='A set of utilities for tasks based on RabbitMQ',
       long_description=open('README.md').read(),

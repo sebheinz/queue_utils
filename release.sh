@@ -26,7 +26,7 @@ if [ -z "$GO_PIPELINE_LABEL" ]; then
     git push
 fi
 
-python setup.py sdist bdist_wheel upload
+python setup.py sdist upload
 
 if [ -z "$GO_PIPELINE_LABEL" ]; then
     git tag ${version}
