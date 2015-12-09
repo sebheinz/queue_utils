@@ -27,7 +27,8 @@ class Worker(object):
         #     print "job id:", collection_content[ID]
         # if COLLECTION in collection_content.keys():
         #     print "collection:", collection_content[COLLECTION]
-        # logging.info("START working on job_id: %s, collection: %s", collection_content[ID], collection_content[COLLECTION])
+        # logging.info("START working on job_id: %s, collection: %s",
+        # collection_content[ID], collection_content[COLLECTION])
 
         # Simply forward an existing error.
         if "error" in payload:
@@ -51,7 +52,8 @@ class Worker(object):
         self.send(results)
 
         # print " [x] Done"
-        # logging.info("work on job_id: %s, collection: %s ... DONE", collection_content[ID], collection_content[COLLECTION])
+        # logging.info("work on job_id: %s, collection: %s ... DONE",
+        # collection_content[ID], collection_content[COLLECTION])
 
         # Only acknowledge the receipt of the message if there were no errors.
         if not error:

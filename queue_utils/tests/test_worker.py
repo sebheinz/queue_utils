@@ -1,6 +1,7 @@
 from queue_utils import Worker
 from queue_utils import InputOutputEndpoint
 
+
 def identity_work_method(payload):
     return payload, None
 
