@@ -1,44 +1,13 @@
-import os
-import sys
-import logging
-
-logging.basicConfig(level=logging.DEBUG)
-
-root = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../')
-sys.path.insert(0, os.path.join(root, 'src'))
-
 from queue_utils import Worker
-
-
-class InputOutput():
-    def __init__(self):
-        self._func = None
-        self._results = []
-        self._acks = []
-
-    def listen(self, func):
-        self._func = func
-
-    def send(self, payload):
-        self._results.append(payload)
-
-    def ack(self, channel, method, is_nack):
-        self._acks.append(not is_nack)
-
-    # Utility functions for testing.
-    def push(self, payload):
-        self._func(None, None, None, payload)
-
-    def pull(self):
-        return self._results
+from queue_utils import InputOutputEndpoint
 
 
 def identity_work_method(payload):
     return payload, None
 
 
-def foo_work_method(payload):
-    return "FOO", None
+def work_method(payload):
+    return "WORKED", None
 
 
 invalid_payload_error = "INVALID_PAYLOAD"
@@ -49,8 +18,8 @@ def all_payloads_are_invalid(payload):
 
 
 def test_basic_worker():
-    input = InputOutput()
-    output = InputOutput()
+    input = InputOutputEndpoint()
+    output = InputOutputEndpoint()
     w = Worker(input, output, identity_work_method)
     w.start()
 
@@ -62,8 +31,8 @@ def test_basic_worker():
 
 def test_invalid_payload_sends_error_and_nacks():
 
-    input = InputOutput()
-    output = InputOutput()
+    input = InputOutputEndpoint()
+    output = InputOutputEndpoint()
     w = Worker(input, output, identity_work_method, all_payloads_are_invalid)
     w.start()
 
@@ -74,10 +43,10 @@ def test_invalid_payload_sends_error_and_nacks():
 
 
 def test_forward_payload_error():
-    input = InputOutput()
-    output = InputOutput()
+    input = InputOutputEndpoint()
+    output = InputOutputEndpoint()
 
-    w = Worker(input, output, foo_work_method)
+    w = Worker(input, output, work_method)
     w.start()
 
     error_payload = {"error": "Some error", }
@@ -88,14 +57,14 @@ def test_forward_payload_error():
 
 
 def test_error_field_with_no_error():
-    input = InputOutput()
-    output = InputOutput()
+    input = InputOutputEndpoint()
+    output = InputOutputEndpoint()
 
-    w = Worker(input, output, foo_work_method)
+    w = Worker(input, output, work_method)
     w.start()
 
     error_payload = {"error": {}, }
     input.push(error_payload)
 
-    assert output.pull() == ["FOO", ]
+    assert output.pull() == ["WORKED", ]
     assert input._acks == [True, ]

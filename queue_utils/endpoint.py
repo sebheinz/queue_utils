@@ -90,3 +90,29 @@ class RabbitMQQueue():
         Close the connection
         """
         self._connection.close()
+
+
+class InputOutputEndpoint(object):
+    """
+    A basic enpoint that can be used for testing.
+    """
+    def __init__(self):
+        self._func = None
+        self._results = []
+        self._acks = []
+
+    def listen(self, func):
+        self._func = func
+
+    def send(self, payload):
+        self._results.append(payload)
+
+    def ack(self, channel, method, is_nack):
+        self._acks.append(not is_nack)
+
+    # Utility functions for testing.
+    def push(self, payload):
+        self._func(None, None, None, payload)
+
+    def pull(self):
+        return self._results
