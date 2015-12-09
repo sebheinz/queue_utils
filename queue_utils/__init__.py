@@ -4,4 +4,4 @@ from .worker import Worker
 
 __all__ = [RabbitMQQueue, Worker, InputOutputEndpoint]
 
-__version__ = '0.0.2'
+__version__ = '0.0.3'
