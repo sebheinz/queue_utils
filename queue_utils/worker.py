@@ -14,18 +14,22 @@ class Worker(object):
 
     def get_work(self, ch, method, properties, payload):
         # Perform logging.
-        logging.info("Processing work unit with payload: %s" % payload)
+        try:
+            payload_text = payload.keys()
+        except:
+            payload_text = payload
+        logging.info("Processing work unit with payload keys: %s" %
+                     payload_text)
         # TODO: Add logging as required. e.g.
-        # collection_content = json.loads(body)
-        # print " [x] Received ", collection_content.keys()
-        # if JOB in collection_content.keys():
-        #     print "job:", collection_content[JOB]
-        # if ID in collection_content.keys():
-        #     print "job id:", collection_content[ID]
-        # if COLLECTION in collection_content.keys():
-        #     print "collection:", collection_content[COLLECTION]
+        # print " [x] Received ", payload.keys()
+        # if JOB in payload.keys():
+        #     print "job:", payload[JOB]
+        # if ID in payload.keys():
+        #     print "job id:", payload[ID]
+        # if COLLECTION in payload.keys():
+        #     print "collection:", payload[COLLECTION]
         # logging.info("START working on job_id: %s, collection: %s",
-        # collection_content[ID], collection_content[COLLECTION])
+        # payload[ID], payload[COLLECTION])
 
         # Simply forward an existing error.
         if "error" in payload:
