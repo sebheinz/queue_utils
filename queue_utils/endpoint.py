@@ -31,8 +31,13 @@ class RabbitMQQueue():
         else:
             self.get_routing_key = get_routing_key
 
+
     def _create_queue_for_routing_key(self, routing_key):
         logging.info("Creating queue for %s" % routing_key)
+        if not self._channel.is_open():
+            logging.info("Channel is closed. Opening.")
+            self._channel.open()
+
         # Declare the required queue
         self._channel.queue_declare(queue=routing_key, durable=True)
         # Bind the queue to the exchange.

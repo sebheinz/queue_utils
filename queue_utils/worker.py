@@ -16,8 +16,7 @@ class Worker(object):
 
     def get_work(self, ch, method, properties, payload):
         # Perform logging.
-        logging.info("Processing work unit")
-        logging.info("Received payload: %s" % payload)
+        logging.info("Processing work unit with payload: %s" % payload)
         # TODO: Add logging as required. e.g.
         # collection_content = json.loads(body)
         # print " [x] Received ", collection_content.keys()
@@ -33,7 +32,7 @@ class Worker(object):
         # Simply forward an existing error.
         if "error" in payload:
             if payload["error"]:
-                logging.info("Forwarding error: %s" % payload["error"])
+                logging.error("Forwarding error: %s" % payload["error"])
                 self.send(payload)
                 self.acknowledge(ch, method)
                 return
@@ -51,16 +50,11 @@ class Worker(object):
         # Send the results.
         self.send(results)
 
-        # print " [x] Done"
-        # logging.info("work on job_id: %s, collection: %s ... DONE",
-        # collection_content[ID], collection_content[COLLECTION])
-
         # Only acknowledge the receipt of the message if there were no errors.
         if not error:
             self.acknowledge(ch, method)
 
-        # TODO: Add logging.
-        # print " [x] Done"
+        logging.info("Done processing work unit")
 
     def is_valid_payload(self, payload):
         # Checking if the payload is valid.
