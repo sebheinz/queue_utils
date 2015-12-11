@@ -2,17 +2,15 @@ import logging
 
 
 class Worker(object):
-    def __init__(self, input, output, work_method, payload_check=None):
-        logging.info("Creating worker with input=%s and output=%s" %
-                     (input, output))
-        self._input = input
-        self._output = output
+    def __init__(self, channel, work_method, payload_check=None):
+        logging.info("Creating worker with channel %s" % channel)
+        self._channel = channel
         self._work_method = work_method
         self._payload_check = payload_check
 
     def start(self):
         logging.info("Starting worker")
-        self._input.listen(self.get_work)
+        self._channel.listen_on_input(self.get_work)
 
     def get_work(self, ch, method, properties, payload):
         # Perform logging.
@@ -34,14 +32,14 @@ class Worker(object):
             if payload["error"]:
                 logging.error("Forwarding error: %s" % payload["error"])
                 self.send(payload)
-                self.acknowledge(ch, method)
+                self.acknowledge(method)
                 return
 
         # Check if the payload is valid.
         is_valid, error = self.is_valid_payload(payload)
         if not is_valid:
             self.send(error)
-            self.acknowledge(ch, method, True)
+            self.acknowledge(method, True)
             return
 
         # Get the results of the worker.
@@ -52,7 +50,7 @@ class Worker(object):
 
         # Only acknowledge the receipt of the message if there were no errors.
         if not error:
-            self.acknowledge(ch, method)
+            self.acknowledge(method)
 
         logging.info("Done processing work unit")
 
@@ -84,12 +82,16 @@ class Worker(object):
         """
         logging.info("Sending payload")
 
-        self._output.send(payload)
+        self._channel.send_to_output(payload)
 
-    def acknowledge(self, channel, method, is_nack=False):
+    def acknowledge(self, method, is_nack=False):
         """
         Acknowledge the processing on the input.
         """
         logging.info("Sending acknowledgement (is_nack=%s)" % is_nack)
 
-        self._input.ack(channel, method, is_nack)
+        if method is None:
+            delivery_tag = None
+        else:
+            delivery_tag = method.delivery_tag
+        self._channel.acknowlege_input(delivery_tag, is_nack)
