@@ -7,6 +7,11 @@ import json
 # http://pika.readthedocs.org/en/latest/examples/asynchronous_consumer_example.html
 # This queue implementation could be expanded.
 class RabbitMQQueue():
+
+    """
+    An endpoint defined by a RabbitMQ Queue channel. This channel
+    """
+
     def __init__(self,
                  url,
                  exchange,
@@ -103,6 +108,7 @@ class RabbitMQQueue():
 
 
 class InputOutputEndpoint(object):
+
     """
     A basic enpoint that can be used for testing.
     """

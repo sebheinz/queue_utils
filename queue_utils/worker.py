@@ -2,18 +2,41 @@ import logging
 
 
 class Worker(object):
+
+    """
+    A Worker is connected to a bidirectional channel, listening on the input
+    port, processing the message recieved, and sending the output to the output
+    port. This allows a Worker to act as both a consumer and a producer when
+    used with queueing paradigms.
+    """
+
     def __init__(self, channel, work_method, payload_check=None):
+        """
+        channel: A bi-directional connection with a defined input and output.
+        work_method: A hook which is used to process the message payload
+                     after some initial checks have been performed.
+        payload_check: A hook that can be used to check the validity of a
+                       message payload.
+        """
         logging.info("Creating worker with channel %s" % channel)
         self._channel = channel
         self._work_method = work_method
         self._payload_check = payload_check
 
     def start(self):
+        """
+        Start the worker as a consumer of the input port. The method get_work
+        is registered as a callback for processing incomming messages.
+        """
         logging.info("Starting worker")
         self._channel.listen_on_input(self.get_work)
 
     def get_work(self, ch, method, properties, payload):
-        # Perform logging.
+        """
+        A callback wich is used for processing incomming messages. Basic error
+        checks are performed, before calling the work hook registered at
+        construction.
+        """
         try:
             payload_text = payload.keys()
         except:
@@ -59,6 +82,11 @@ class Worker(object):
         logging.info("Done processing work unit")
 
     def is_valid_payload(self, payload):
+        """
+        Check if the specified payload is valid. All payloads are considered
+        valid by defaults, but a validity check can be included during
+        construction.
+        """
         # Checking if the payload is valid.
         logging.info("Checking for valid payload")
 
@@ -72,7 +100,7 @@ class Worker(object):
 
     def do_work(self, payload):
         """
-        Do the work specified by the payload.
+        Call the work hook specified at construction.
         """
         logging.info("Doing work")
 
@@ -82,7 +110,8 @@ class Worker(object):
 
     def send(self, payload):
         """
-        Send the specified payload.
+        Send the payload to the output port of the channel with which the
+        worker is associated.
         """
         logging.info("Sending payload")
 
