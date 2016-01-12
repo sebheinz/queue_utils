@@ -17,6 +17,8 @@ class RabbitMQQueue():
                  exchange,
                  input_id,
                  output_id,
+                 encode=json.dumps,
+                 decode=json.loads,
                  get_output_routing_key=None):
         self._params = pika.URLParameters(url)
         self._params.socket_timeout = 5
@@ -41,6 +43,10 @@ class RabbitMQQueue():
             self.get_output_routing_key = self._default_output_routing_key
         else:
             self.get_output_routing_key = get_output_routing_key
+        
+        # Set encoding/decoding scheme.
+        self.encode = encode
+        self.decode = decode
 
     def __str__(self):
         return str((self._input_id, self._output_id))
@@ -65,7 +71,7 @@ class RabbitMQQueue():
         """
 
         def json_func(ch, method, properties, payload):
-            func(ch, method, properties, json.loads(payload))
+            func(ch, method, properties, self.decode(payload))
 
         self._create_queue_for_routing_key(self._input_id)
 
@@ -86,7 +92,7 @@ class RabbitMQQueue():
 
         result = self._channel.basic_publish(exchange=self._exchange,
                                              routing_key=r_key,
-                                             body=json.dumps(payload),
+                                             body=self.encode(payload),
                                              properties=self._send_properties)
 
         logging.info("result=%s" % result)
