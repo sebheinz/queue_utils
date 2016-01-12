@@ -2,10 +2,11 @@ import logging
 import pika
 import json
 
-
 # TODO: See the example at:
 # http://pika.readthedocs.org/en/latest/examples/asynchronous_consumer_example.html
 # This queue implementation could be expanded.
+
+
 class RabbitMQQueue():
 
     """
@@ -43,7 +44,7 @@ class RabbitMQQueue():
             self.get_output_routing_key = self._default_output_routing_key
         else:
             self.get_output_routing_key = get_output_routing_key
-        
+
         # Set encoding/decoding scheme.
         self.encode = encode
         self.decode = decode
